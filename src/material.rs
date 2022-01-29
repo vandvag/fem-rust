@@ -11,7 +11,7 @@ pub struct Material {
 
 impl Material {
 
-	pub fn new(E: f32, nu: f32) -> Material {
+	pub fn new(e: f32, nu: f32) -> Material {
 		// Change between plane stress and plain strain stress
 		// TODO: find a way to change between plane stress and plane strain conditions
 		/*
@@ -31,7 +31,7 @@ impl Material {
 		}
 		*/
 		// plane stress settings
-		let e1: f32 = E / (1.0 - nu * nu);
+		let e1: f32 = e / (1.0 - nu * nu);
 		let e2: f32 = nu * e1;
 		let e3: f32 = e1 * (1.0 - 2.0 * nu) / 2.0;
 		let mat_matrix = Matrix::new(3, 3, vec![e1, e2, 0.0, e2, e1, 0.0, 0.0, 0.0, e3]);
