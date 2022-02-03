@@ -1,12 +1,7 @@
 use ndarray::array;
-use ndarray::prelude::*;
 use ndarray::Array2;
 
-enum StressCondition {
-    plane_stress,
-    plane_strain,
-}
-
+#[derive(Debug, Clone)]
 pub struct Material {
     mat_matrix: Array2<f32>,
 }
@@ -27,9 +22,7 @@ impl Material {
         let e3: f32 = e1 * (1.0 - 2.0 * nu) / 2.0;
         // let mat_matrix = Matrix::new(3, 3, vec![e1, e2, 0.0, e2, e1, 0.0, 0.0, 0.0, e3]);
         let mat_matrix = array![[e1, e2, 0.0], [e2, e1, 0.0], [0.0, 0.0, e3]];
-        Material {
-            mat_matrix
-        }
+        Material { mat_matrix }
     }
 
     pub fn get_mat_matrix(&self) -> &Array2<f32> {
