@@ -1,29 +1,55 @@
 use crate::material::Material;
 use crate::node::Node;
 
-#[derive(Debug)]
-pub struct Discretization {
-    nodes: Vec<Node>,
-    materials: Vec<Material>,
-}
+// Function that prepares the discretization
 
-impl Discretization {
-    pub fn new(_nodes: Vec<Node>, _materials: Vec<Material>) -> Discretization {
-        Discretization {
-            nodes: _nodes,
-            materials: _materials,
+pub fn discretization() {
+    // Counter for Dirichlet dofs
+    let mut num_dof_dirich = 0;
+    // Counter for dofs that need to be computed
+    let mut num_dof_solve = 0;
+    // Total dofs
+    let mut num_dof_total = 0;
+
+    // Create a vector containing all the different
+    // material parameters
+    let mut materials: Vec<Material> = Vec::new();
+
+    let youngs = 1000_f64;
+    let poisson = 0.5;
+
+    materials.push(Material::new(youngs, poisson));
+
+    // Read Geometry data
+    // Here we are discretizing a 2D plate
+    // with dimensions l_x (x) l_y
+    // with div_x and div_y elements in x and y axis respectively
+
+    let l_x = 10_f64;
+    let l_y = 2_f64;
+    let div_x = 20;
+    let div_y = 5;
+
+    // Nodes
+    // Create a vector of nodes
+    let num_nodes: i32 = (&div_x + 1) * (&div_y + 1);
+    let mut nodes: Vec<Node> = Vec::with_capacity(num_nodes as usize);
+
+    // calculate size of one element
+    let el_x = l_x / div_x as f64;
+    let el_y = l_y / div_y as f64;
+
+    for i in 0..(div_y + 1) {
+        for j in 0..(div_x + 1) {
+            // nodes[(i * (div_x + 1) * j) as usize] =
+            //     Node::new(i * (div_x + 1) + j, j as f64* el_x, i as f64* el_y);
+            nodes.push(Node::new(
+                i * (div_x + 1) + j,
+                j as f64 * el_x,
+                i as f64 * el_y,
+            ));
         }
     }
 
-    pub fn assign_dofs() {
-        panic!("Not implemented yet!");
-    }
-
-    pub fn assemble_static_linear() {
-        panic!("Not implemented yet!");
-    }
-
-    pub fn assemble_fext() {
-        panic!("Not implemented yet!");
-    }
+    println!("{:?}", nodes);
 }
