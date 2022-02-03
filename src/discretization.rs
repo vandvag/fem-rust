@@ -1,3 +1,6 @@
+use std::collections::HashMap;
+use std::hash::Hash;
+
 use crate::material::Material;
 use crate::node::Node;
 
@@ -31,9 +34,9 @@ pub fn discretization() {
     let div_y = 5;
 
     // Nodes
-    // Create a vector of nodes
+    // Collect nodes in a hash map
     let num_nodes: i32 = (&div_x + 1) * (&div_y + 1);
-    let mut nodes: Vec<Node> = Vec::with_capacity(num_nodes as usize);
+    let mut nodes: HashMap<usize, Node> = HashMap::new();
 
     // calculate size of one element
     let el_x = l_x / div_x as f64;
@@ -43,11 +46,10 @@ pub fn discretization() {
         for j in 0..(div_x + 1) {
             // nodes[(i * (div_x + 1) * j) as usize] =
             //     Node::new(i * (div_x + 1) + j, j as f64* el_x, i as f64* el_y);
-            nodes.push(Node::new(
-                i * (div_x + 1) + j,
-                j as f64 * el_x,
-                i as f64 * el_y,
-            ));
+            nodes.insert(
+                (i * (div_x + 1) + j) as usize,
+                Node::new(i * (div_x + 1) + j, j as f64 * el_x, i as f64 * el_y),
+            );
         }
     }
 
