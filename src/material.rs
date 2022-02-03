@@ -28,7 +28,7 @@ impl Material {
         // let mat_matrix = Matrix::new(3, 3, vec![e1, e2, 0.0, e2, e1, 0.0, 0.0, 0.0, e3]);
         let mat_matrix = array![[e1, e2, 0.0], [e2, e1, 0.0], [0.0, 0.0, e3]];
         Material {
-            mat_matrix: mat_matrix,
+            mat_matrix
         }
     }
 
