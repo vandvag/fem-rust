@@ -1,8 +1,8 @@
 use std::collections::HashMap;
-use std::hash::Hash;
 
 use crate::material::Material;
 use crate::node::Node;
+use crate::element::Element;
 
 // Function that prepares the discretization
 
@@ -13,6 +13,10 @@ pub fn discretization() {
     let mut num_dof_solve = 0;
     // Total dofs
     let mut num_dof_total = 0;
+
+    println!("==============================");
+    println!("Preparing discretization");
+    println!("==============================");
 
     // Create a vector containing all the different
     // material parameters
@@ -33,11 +37,15 @@ pub fn discretization() {
     let div_x = 20;
     let div_y = 5;
 
-    // Nodes
+    /******************************
+                Nodes
+    ******************************/
     // Collect nodes in a hash map
     let num_nodes: i32 = (&div_x + 1) * (&div_y + 1);
     let mut nodes: HashMap<usize, Node> = HashMap::new();
 
+    println!("==============================");
+    println!("Nodes: ");
     // calculate size of one element
     let el_x = l_x / div_x as f64;
     let el_y = l_y / div_y as f64;
@@ -53,5 +61,19 @@ pub fn discretization() {
         }
     }
 
-    println!("{:?}", nodes);
+    /******************************
+              Elements
+    ******************************/
+    let num_elems: i32 = (&div_x + 1) * (&div_y + 1);
+    let mut elements: HashMap<usize, Element> = HashMap::new();
+
+    println!("==============================");
+    println!("Nodes: ");
+
+    for i in 0..div_y {
+        for j in 0..div_x {
+            unimplemented!("You have to wait bro")
+        }
+    }
+    
 }
