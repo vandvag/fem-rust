@@ -1,9 +1,7 @@
 mod discretization;
 mod material;
 mod node;
-
-use material::Material;
-use node::Node;
+mod element;
 
 fn main() {
     discretization::discretization();

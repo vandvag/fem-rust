@@ -1,11 +1,10 @@
 use std::collections::HashMap;
 
+use crate::element::Element;
 use crate::material::Material;
 use crate::node::Node;
-use crate::element::Element;
 
 // Function that prepares the discretization
-
 pub fn discretization() {
     // Counter for Dirichlet dofs
     let mut num_dof_dirich = 0;
@@ -72,8 +71,23 @@ pub fn discretization() {
 
     for i in 0..div_y {
         for j in 0..div_x {
-            unimplemented!("You have to wait bro")
+            elements.insert(
+                (i * div_x + j) as usize,
+                Element::new(
+                    i * div_x + j,
+                    i * (div_x + 1) + j,
+                    i * (div_x + 1) + j + 1,
+                    (i + 1) * (div_x + 1) + j + 1,
+                    (i + 1) * (div_x + 1) + j,
+                    &materials[0],
+                ),
+            );
         }
     }
-    
+
+    println!("{:?}", materials);
+
+    /******************************
+              Supports
+    ******************************/
 }

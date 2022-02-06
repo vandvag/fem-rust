@@ -8,26 +8,31 @@
 /// 		|					  |
 /// 		|					  |
 /// node 4: +---------------------+ : node 3
-use material::Material;
+use crate::material::Material;
 
-struct Element {
-    id: i32,       // Element id
-    n1: i32,       // Node 1 id
-    n2: i32,       // Node 2 id
-    n3: i32,       // Node 3 id
-    n4: i32,       // Node 4 id
-    mat: Material, // Material
+pub struct Element<'a> {
+    id: i32,
+    // Element id
+    n1: i32,
+    // Node 1 id
+    n2: i32,
+    // Node 2 id
+    n3: i32,
+    // Node 3 id
+    n4: i32,
+    // Node 4 id
+    mat: &'a Material, // Reference to a material
 }
 
-impl Element {
-    fn new(_id: i32, _n1: i32, _n2: i32, _n3: i32, _n4: i32, _mat: Material) -> Element {
+impl Element<'_> {
+    pub fn new(_id: i32, _n1: i32, _n2: i32, _n3: i32, _n4: i32, _mat: &Material) -> Element {
         Element {
-            _id,
-            _n1,
-            _n2,
-            _n3,
-            _n4,
-            mat,
+            id: _id,
+            n1: _n1,
+            n2: _n2,
+            n3: _n3,
+            n4: _n4,
+            mat: _mat,
         }
     }
 }
