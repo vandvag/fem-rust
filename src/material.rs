@@ -30,7 +30,7 @@ impl Material {
         Material { mat_matrix }
     }
 
-    pub fn get_mat_matrix(&self) -> &Array2<f64> {
-        &self.mat_matrix
+    pub fn get_mat_matrix(&self) -> Array2<f64> {
+        self.mat_matrix
     }
 }

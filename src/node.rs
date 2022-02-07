@@ -15,6 +15,10 @@ impl Node {
     pub fn get_id(&self) -> i32 {
         self.id
     }
+
+	pub fn get_coords(&self) -> Vec<f64> {
+		self.coords
+	}
 }
 
 impl Display for Node {

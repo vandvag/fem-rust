@@ -46,7 +46,6 @@ pub fn discretization() {
             Nodes
     ******************************/
     // Collect nodes in a hash map
-    let num_nodes: i32 = (&div_x + 1) * (&div_y + 1);
     let mut nodes: HashMap<i32, Node> = HashMap::new();
 
     println!("==============================");
@@ -66,14 +65,15 @@ pub fn discretization() {
         }
     }
 
+    println!("{} nodes were created!", &nodes.values().len());
+
     /******************************
                  Elements
     ******************************/
-    let num_elems: i32 = (&div_x + 1) * (&div_y + 1);
     let mut elements: HashMap<i32, Element> = HashMap::new();
 
     println!("==============================");
-    println!("Nodes: ");
+    println!("Elements: ");
 
     for i in 0..div_y {
         for j in 0..div_x {
@@ -91,10 +91,12 @@ pub fn discretization() {
             );
         }
     }
+    println!("{} elements were created", &elements.values().len());
 
     println!("{:?}", materials);
-    println!("{:?}", &nodes)
-
+    // for key in nodes.values() {
+    //     println!("{}", key)
+    // }
     /******************************
                  Supports
     ******************************/
