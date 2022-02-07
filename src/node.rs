@@ -1,4 +1,4 @@
-#[derive(Debug)]
+use std::fmt::{self, Display};
 pub struct Node {
     id: i32,
     coords: Vec<f64>,
@@ -12,7 +12,17 @@ impl Node {
         }
     }
 
-	pub fn get_id(&self) -> i32 {
-		self.id
-	}
+    pub fn get_id(&self) -> i32 {
+        self.id
+    }
+}
+
+impl Display for Node {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        write!(
+            f,
+            "Node {}: \t({}, {})",
+            self.id, self.coords[0], self.coords[1]
+        )
+    }
 }
