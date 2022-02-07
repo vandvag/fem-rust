@@ -4,6 +4,11 @@ use crate::element::Element;
 use crate::material::Material;
 use crate::node::Node;
 
+// TODO Need to rewire this crate as a struct
+// TODO since I need to be able to store all the
+// TODO nodes/elements in their respective vectors.
+// TODO I will need their properties when I am calculating
+// TODO the element stiffness matrix later
 // Function that prepares the discretization
 pub fn discretization() {
     // Counter for Dirichlet dofs
