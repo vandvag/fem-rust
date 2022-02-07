@@ -2,6 +2,7 @@ use std::{collections::HashMap, fmt::Display};
 
 use crate::{material::Material, node::Node};
 use ndarray::{array, Array2};
+use ndarray_linalg::solve::{Determinant, Inverse};
 
 /// Implementation for a q1 2D finite element
 /// node 1: +---------------------+ : node 2
@@ -61,6 +62,7 @@ impl Element<'_> {
     pub fn get_statlin(&self) -> Array2<f64> {
         // Calculates the static linear stiffness matrix for the element
 
+        let _ele_stiffness = Array2::<f64>::zeros((8, 8));
         // This array contains the data required for the Gauss integration
         // scheme. Column 0 contains the position of the Gauss points
         // and column 1 contains the Gauss points factors
@@ -72,6 +74,7 @@ impl Element<'_> {
         let mut xi = 0_f64;
         let mut eta = 0_f64;
         let mut omega_gp = 0_f64;
+        let mut det = 0_f64;
 
         for i in 0..2 {
             for j in 0..2 {
@@ -91,9 +94,34 @@ impl Element<'_> {
                 // TODO For the jacobian I need to know the coordinates of the
                 // TODO nodes of the element
                 let mut jaco = Array2::<f64>::zeros((2, 2));
+
+                for k in 0..4 {
+                    jaco[[0, 0]] += deriv[[k, 0]] * self.nodes[k].get_coords()[0];
+                    jaco[[0, 1]] += deriv[[k, 0]] * self.nodes[k].get_coords()[1];
+                    jaco[[0, 0]] += deriv[[k, 1]] * self.nodes[k].get_coords()[0];
+                    jaco[[0, 0]] += deriv[[k, 1]] * self.nodes[k].get_coords()[1];
+                }
+
+                det = jaco.det();
+                let jaco_inv = jaco.inv();
+
+                // B operator
+                let bop = Array2::<f64>::zeros((3, 8));
+                for k in 0..4 {
+                    let node_start = k * 2;
+                    bop[[0, node_start + 0]] =
+                        jaco_inv[[0, 0]] * deriv[[k, 0]] + jaco_inv[[0, 1]] * deriv[[k, 1]];
+                    bop[[1, node_start + 1]] =
+                        jaco_inv[[1, 0]] * deriv[[k, 0]] + jaco_inv[[1, 1]] * deriv[[k, 1]];
+                    bop[[2, node_start + 0]] = bop[[1, node_start + 1]];
+                    bop[[2, node_start + 1]] = bop[[0, node_start + 0]];
+                }
+                let boptr = bop.t();
+                _ele_stiffness =
+                    _ele_stiffness + omega_gp * det * boptr * self.mat.get_mat_matrix() * bop;
             }
         }
-        array![[1.0, 1.0, 1.0,], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0]]
+        _ele_stiffness
     }
 }
 
