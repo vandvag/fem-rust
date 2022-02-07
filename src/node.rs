@@ -11,4 +11,8 @@ impl Node {
             coords: Vec::from([_x, _y]),
         }
     }
+
+	pub fn get_id(&self) -> i32 {
+		self.id
+	}
 }

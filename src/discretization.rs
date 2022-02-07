@@ -9,6 +9,7 @@ use crate::node::Node;
 // TODO nodes/elements in their respective vectors.
 // TODO I will need their properties when I am calculating
 // TODO the element stiffness matrix later
+
 // Function that prepares the discretization
 pub fn discretization() {
     // Counter for Dirichlet dofs
@@ -42,11 +43,11 @@ pub fn discretization() {
     let div_y = 5;
 
     /******************************
-                Nodes
+            Nodes
     ******************************/
     // Collect nodes in a hash map
     let num_nodes: i32 = (&div_x + 1) * (&div_y + 1);
-    let mut nodes: HashMap<usize, Node> = HashMap::new();
+    let mut nodes: HashMap<i32, Node> = HashMap::new();
 
     println!("==============================");
     println!("Nodes: ");
@@ -59,17 +60,17 @@ pub fn discretization() {
             // nodes[(i * (div_x + 1) * j) as usize] =
             //     Node::new(i * (div_x + 1) + j, j as f64* el_x, i as f64* el_y);
             nodes.insert(
-                (i * (div_x + 1) + j) as usize,
+                i * (div_x + 1) + j,
                 Node::new(i * (div_x + 1) + j, j as f64 * el_x, i as f64 * el_y),
             );
         }
     }
 
     /******************************
-              Elements
+                 Elements
     ******************************/
     let num_elems: i32 = (&div_x + 1) * (&div_y + 1);
-    let mut elements: HashMap<usize, Element> = HashMap::new();
+    let mut elements: HashMap<i32, Element> = HashMap::new();
 
     println!("==============================");
     println!("Nodes: ");
@@ -77,7 +78,7 @@ pub fn discretization() {
     for i in 0..div_y {
         for j in 0..div_x {
             elements.insert(
-                (i * div_x + j) as usize,
+                i * div_x + j,
                 Element::new(
                     i * div_x + j,
                     i * (div_x + 1) + j,
@@ -85,14 +86,16 @@ pub fn discretization() {
                     (i + 1) * (div_x + 1) + j + 1,
                     (i + 1) * (div_x + 1) + j,
                     &materials[0],
+                    &nodes,
                 ),
             );
         }
     }
 
     println!("{:?}", materials);
+    println!("{:?}", &nodes)
 
     /******************************
-              Supports
+                 Supports
     ******************************/
 }

@@ -1,3 +1,5 @@
+use std::{collections::HashMap, fmt::Display};
+
 use crate::{material::Material, node::Node};
 use ndarray::{array, Array2};
 
@@ -27,26 +29,31 @@ Element need to contatin the following fields:
 pub struct Element<'a> {
     id: i32,
     // Element id
-    n1: i32,
-    // Node 1 id
-    n2: i32,
-    // Node 2 id
-    n3: i32,
-    // Node 3 id
-    n4: i32,
-    // Node 4 id
+    nodes: Vec<&'a Node>,
+    // Vector of nodes
     mat: &'a Material, // Reference to a material
-                       //
 }
 
 impl Element<'_> {
-    pub fn new(_id: i32, _n1: i32, _n2: i32, _n3: i32, _n4: i32, _mat: &Material) -> Element {
+    pub fn new<'a>(
+        _id: i32,
+        _n1: i32,
+        _n2: i32,
+        _n3: i32,
+        _n4: i32,
+        _mat: &'a Material,
+        _nodes: &'a HashMap<i32, Node>,
+    ) -> Element<'a> {
+        let mut nds: Vec<&Node> = Vec::new();
+
+        nds.push(&_nodes[&_n1]);
+        nds.push(&_nodes[&_n2]);
+        nds.push(&_nodes[&_n3]);
+        nds.push(&_nodes[&_n4]);
+
         Element {
             id: _id,
-            n1: _n1,
-            n2: _n2,
-            n3: _n3,
-            n4: _n4,
+            nodes: nds,
             mat: _mat,
         }
     }
@@ -87,5 +94,19 @@ impl Element<'_> {
             }
         }
         array![[1.0, 1.0, 1.0,], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0]]
+    }
+}
+
+impl Display for Element<'_> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(
+            f,
+            "Element: {}\tNodes: ({}, {}, {}, {})",
+            self.id,
+            self.nodes[0].get_id(),
+            self.nodes[1].get_id(),
+            self.nodes[2].get_id(),
+            self.nodes[3].get_id()
+        )
     }
 }
