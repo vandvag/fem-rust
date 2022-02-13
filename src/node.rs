@@ -1,4 +1,4 @@
-use std::fmt::{self, Display};
+use std::fmt::Display;
 pub struct Node {
     id: i32,
     coords: Vec<f64>,
