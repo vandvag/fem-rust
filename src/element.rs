@@ -1,6 +1,6 @@
-use std::{collections::HashMap, fmt::Display};
 use crate::{material::Material, node::Node};
-use nalgebra::{SMatrix};
+use nalgebra::{Matrix2, Matrix4x2, SMatrix};
+use std::{collections::HashMap, fmt::Display};
 
 /// Implementation for a q1 2D finite element
 /// node 1: +---------------------+ : node 2
@@ -43,12 +43,7 @@ impl Element<'_> {
         _mat: &'a Material,
         _nodes: &'a HashMap<i32, Node>,
     ) -> Element<'a> {
-        let mut nds: Vec<&Node> = Vec::new();
-
-        nds.push(&_nodes[&_n1]);
-        nds.push(&_nodes[&_n2]);
-        nds.push(&_nodes[&_n3]);
-        nds.push(&_nodes[&_n4]);
+        let nds: Vec<&Node> = vec![&_nodes[&_n1], &_nodes[&_n2], &_nodes[&_n3], &_nodes[&_n4]];
 
         Element {
             id: _id,
@@ -65,10 +60,11 @@ impl Element<'_> {
         // This array contains the data required for the Gauss integration
         // scheme. Column 0 contains the position of the Gauss points
         // and column 1 contains the Gauss points factors
-        let int_data: Array2<f64> =
-            array![[-1.0 / 3.0_f64.sqrt(), 1.0], [1.0 / 3.0_f64.sqrt(), 1.0]];
 
-        let mut deriv: Array2<f64> = zeros((4, 2));
+        let int_data: Matrix2<f64> =
+            Matrix2::new(-1.0 / 3.0_f64.sqrt(), 1.0, 1.0 / 3.0_f64.sqrt(), 1.0);
+
+        let mut deriv: Matrix4x2<f64> = Matrix4x2::zeros();
         // xi variable used for shape function derivation
         let mut xi = 0_f64;
         let mut eta = 0_f64;
@@ -76,48 +72,48 @@ impl Element<'_> {
 
         for i in 0..2 {
             for j in 0..2 {
-                xi = int_data[[i, 0]];
-                eta = int_data[[j, 0]];
-                omega_gp = int_data[[i, 1]] * int_data[[j, 1]];
+                xi = int_data[(i, 0)];
+                eta = int_data[(j, 0)];
+                omega_gp = int_data[(i, 1)] * int_data[(j, 1)];
 
-                deriv[[0, 0]] = -0.25 * (1.0 - eta);
-                deriv[[0, 1]] = -0.25 * (1.0 - xi);
-                deriv[[1, 1]] = 0.25 * (1.0 - eta);
-                deriv[[2, 0]] = 0.25 * (1.0 + eta);
-                deriv[[2, 1]] = 0.25 * (1.0 + xi);
-                deriv[[3, 0]] = -0.25 * (1.0 + eta);
-                deriv[[3, 1]] = 0.25 * (1.0 - xi);
+                deriv[(0, 0)] = -0.25 * (1.0 - eta);
+                deriv[(0, 1)] = -0.25 * (1.0 - xi);
+                deriv[(1, 1)] = 0.25 * (1.0 - eta);
+                deriv[(2, 0)] = 0.25 * (1.0 + eta);
+                deriv[(2, 1)] = 0.25 * (1.0 + xi);
+                deriv[(3, 0)] = -0.25 * (1.0 + eta);
+                deriv[(3, 1)] = 0.25 * (1.0 - xi);
 
                 // Jacobian matrix
                 // TODO For the jacobian I need to know the coordinates of the
                 // TODO nodes of the element
-                let mut jaco: Array2<f64> = zeros((2, 2));
+                let mut jaco: Matrix2<f64> = Matrix2::zeros();
 
                 for k in 0..4 {
-                    jaco[[0, 0]] += deriv[[k, 0]] * self.nodes[k].get_coords()[0];
-                    jaco[[0, 1]] += deriv[[k, 0]] * self.nodes[k].get_coords()[1];
-                    jaco[[0, 0]] += deriv[[k, 1]] * self.nodes[k].get_coords()[0];
-                    jaco[[0, 0]] += deriv[[k, 1]] * self.nodes[k].get_coords()[1];
+                    jaco[(0, 0)] += deriv[(k, 0)] * self.nodes[k].get_coords()[0];
+                    jaco[(0, 1)] += deriv[(k, 0)] * self.nodes[k].get_coords()[1];
+                    jaco[(0, 0)] += deriv[(k, 1)] * self.nodes[k].get_coords()[0];
+                    jaco[(0, 0)] += deriv[(k, 1)] * self.nodes[k].get_coords()[1];
                 }
 
                 // det = ndarray_linalg::Determinant::det(&jaco).unwrap();
-                det = jaco.det();
-                let jaco_inv = jaco.inv();
+                let det = jaco.determinant();
+                // TODO unwrap panics
+                let jaco_inv = jaco.try_inverse().unwrap();
 
                 // B operator
-                let mut bop: Array2<f64> = zeros((3, 8));
+                let mut bop: SMatrix<f64, 3, 8> = SMatrix::zeros();
                 for k in 0..4 {
                     let node_start = k * 2;
-                    bop[[0, node_start + 0]] =
-                        jaco_inv[[0, 0]] * deriv[[k, 0]] + jaco_inv[[0, 1]] * deriv[[k, 1]];
-                    bop[[1, node_start + 1]] =
-                        jaco_inv[[1, 0]] * deriv[[k, 0]] + jaco_inv[[1, 1]] * deriv[[k, 1]];
-                    bop[[2, node_start + 0]] = bop[[1, node_start + 1]];
-                    bop[[2, node_start + 1]] = bop[[0, node_start + 0]];
+                    bop[(0, node_start)] =
+                        jaco_inv[(0, 0)] * deriv[(k, 0)] + jaco_inv[(0, 1)] * deriv[(k, 1)];
+                    bop[(1, node_start + 1)] =
+                        jaco_inv[(1, 0)] * deriv[(k, 0)] + jaco_inv[(1, 1)] * deriv[(k, 1)];
+                    bop[(2, node_start)] = bop[(1, node_start + 1)];
+                    bop[(2, node_start + 1)] = bop[(0, node_start)];
                 }
-                let boptr = bop.t();
-                _ele_stiffness =
-                    _ele_stiffness + omega_gp * det * boptr * self.mat.get_mat_matrix() * bop;
+                let boptr = bop.transpose();
+                _ele_stiffness += omega_gp * det * boptr * self.mat.get_mat_matrix() * bop;
             }
         }
         _ele_stiffness

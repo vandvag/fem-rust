@@ -93,10 +93,6 @@ pub fn discretization() {
     }
     println!("{} elements were created", &elements.values().len());
 
-    println!("{:?}", materials);
-    // for key in nodes.values() {
-    //     println!("{}", key)
-    // }
     /******************************
                  Supports
     ******************************/
