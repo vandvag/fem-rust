@@ -1,9 +1,10 @@
 // mod discretization;
 // mod element;
 mod material;
-// mod node;
+mod node;
 
 use material::Material;
+use nalgebra::SMatrix;
 // use std::collections::HashMap;
 // use {element::Element, node::Node};
 
@@ -12,5 +13,7 @@ fn main() {
     let mat = Material::new(1000.0, 0.5);
     println!("{}", &mat);
     println!("{}", mat.get_mat_matrix());
+    let a: SMatrix<i32, 8, 8> = SMatrix::zeros();
+    println!("{}", a);
     println!("Hello, world!");
 }

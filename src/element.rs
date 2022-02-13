@@ -1,11 +1,6 @@
 use std::{collections::HashMap, fmt::Display};
-
 use crate::{material::Material, node::Node};
-use ndarray::{array, Array2};
-use ndarray::ArrayBase::zeros;
-// use ndarray_linalg::solve::{Determinant, Inverse};
-use ndarray_linalg::*;
-use ndarray_linalg::solve::Determinant;
+use nalgebra::{SMatrix};
 
 /// Implementation for a q1 2D finite element
 /// node 1: +---------------------+ : node 2
@@ -62,10 +57,11 @@ impl Element<'_> {
         }
     }
 
-    pub fn get_statlin(&self) -> Array2<f64> {
+    pub fn get_statlin(&self) -> SMatrix<f64, 8, 8> {
         // Calculates the static linear stiffness matrix for the element
 
-        let mut _ele_stiffness: Array2<f64> = zeros((8, 8));
+        // let mut _ele_stiffness: Array2<f64> = zeros((8, 8));
+        let mut _ele_stiffness: SMatrix<f64, 8, 8> = SMatrix::zeros();
         // This array contains the data required for the Gauss integration
         // scheme. Column 0 contains the position of the Gauss points
         // and column 1 contains the Gauss points factors

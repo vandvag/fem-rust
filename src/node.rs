@@ -16,8 +16,8 @@ impl Node {
         self.id
     }
 
-	pub fn get_coords(&self) -> Vec<f64> {
-		self.coords
+	pub fn get_coords(&self) -> &Vec<f64> {
+		&self.coords
 	}
 }
 
