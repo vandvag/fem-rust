@@ -18,11 +18,10 @@ use std::{collections::HashMap, fmt::Display};
 // TODO the vector containing all the node objects
 // TODO
 /*
-Element need to contatin the following fields:
     -- id: i32 -> Id number of the element
     -- idMatrix: Array1<i32> -> ID Matrix of the element
     -- nodes: Vec<&Node> -> Vector containing references to the structure nodes
-    -- mateial: &Material -> Reference to the material of the element
+    -- material: &Material -> Reference to the material of the element
 */
 
 pub struct Element<'a> {
@@ -63,7 +62,7 @@ impl Element<'_> {
 
         let int_data: Matrix2<f64> =
             Matrix2::new(-1.0 / 3.0_f64.sqrt(), 1.0, 1.0 / 3.0_f64.sqrt(), 1.0);
-
+        
         let mut deriv: Matrix4x2<f64> = Matrix4x2::zeros();
         // xi variable used for shape function derivation
         let mut xi = 0_f64;
@@ -99,6 +98,7 @@ impl Element<'_> {
                 // det = ndarray_linalg::Determinant::det(&jaco).unwrap();
                 let det = jaco.determinant();
                 // TODO unwrap panics
+                // let jaco_inv = jaco.try_inverse();
                 let jaco_inv = jaco.try_inverse().unwrap();
 
                 // B operator

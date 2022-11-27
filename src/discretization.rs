@@ -60,7 +60,9 @@ pub fn discretization() {
             //     Node::new(i * (div_x + 1) + j, j as f64* el_x, i as f64* el_y);
             nodes.insert(
                 i * (div_x + 1) + j,
-                Node::new(i * (div_x + 1) + j, j as f64 * el_x, i as f64 * el_y),
+                Node::new(i * (div_x + 1) + j,
+                          j as f64 * el_x,
+                          i as f64 * el_y),
             );
         }
     }
